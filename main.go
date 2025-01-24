@@ -5,15 +5,45 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/lib/pq"
 )
 
+func loadEnv(env string) error {
+	fileName := fmt.Sprintf(".env.%s", env)
+	return godotenv.Load(fileName)
+}
+
 func main() {
-	connString := "server=localhost;user id=sa;password=1StrongPwd!!;database=ksn_db"
-	// connString := "postgres://postgres:123456@localhost/ksn_db"
+
+	// Get the environment variable to determine which .env file to load
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "" {
+		// Default to "dev" if APP_ENV is not set
+		appEnv = "dev"
+	}
+
+	// Load the appropriate .env file
+	err := loadEnv(appEnv)
+	if err != nil {
+		log.Fatalf("Error loading .env.%s file: %v", appEnv, err)
+	}
+
+	// Port := os.Getenv("APP_PORT")
+	DbHost := os.Getenv("DB_HOST")
+	// DbPort := os.Getenv("DB_PORT")
+	DbUser := os.Getenv("DB_USER")
+	DbPassword := os.Getenv("DB_PASSWORD")
+	DbName := os.Getenv("DB_NAME")
+
+	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;database=%s", DbHost, DbUser, DbPassword, DbName)
+
+	fmt.Println(connString)
 
 	db, err := sql.Open("mssql", connString)
 	// db, err := sql.Open("postgres", connString)
@@ -42,7 +72,7 @@ func main() {
 		log.Printf("Item: %s ID: %d", product.item, product.id)
 	}
 
-	ValueTest := 7
+	ValueTest := 8
 
 	cover, err := getItem(db, ValueTest)
 
