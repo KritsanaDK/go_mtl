@@ -29,34 +29,22 @@ func main() {
 
 	defer db.Close()
 
-	// query := "SELECT * FROM dbo.itemData"
-	// rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal("Error executing query:", err)
+	}
 
-	// if err != nil {
-	// 	log.Fatal("Error executing query:", err)
-	// }
+	products, err := selectProductsByPrice(db)
+	if err != nil {
+		log.Printf("Error %s when selecting product by price", err)
+		return
+	}
+	for _, product := range products {
+		log.Printf("Item: %s ID: %d", product.item, product.id)
+	}
 
-	// for rows.Next() {
-	// 	var id int
-	// 	var item string
-	// 	if err := rows.Scan(&id, &item); err != nil {
-	// 		log.Fatalf("Error scanning row: %v", err)
-	// 	}
-	// 	fmt.Printf("ID: %d, Name: %s\n", id, item)
-	// }
+	ValueTest := 7
 
-	// products, err := selectProductsByPrice(db)
-	// if err != nil {
-	// 	log.Printf("Error %s when selecting product by price", err)
-	// 	return
-	// }
-	// for _, product := range products {
-	// 	log.Printf("Item: %s ID: %d", product.item, product.id)
-	// }
-
-	//
-
-	cover, err := getItem(db, 3)
+	cover, err := getItem(db, ValueTest)
 
 	if err != nil {
 		log.Fatalf("Error fetching item: %s", err)
@@ -77,7 +65,7 @@ func main() {
 	fmt.Println(cover.id, cover.item)
 
 	updatedCover := &Cover{
-		id:   3,
+		id:   ValueTest,
 		item: "Updated Item",
 	}
 
@@ -87,7 +75,7 @@ func main() {
 		log.Fatalf("Error updating item: %s", err)
 	}
 
-	err = delItem(db, 3)
+	err = delItem(db, ValueTest)
 	if err != nil {
 		log.Printf("Error deleting item: %s", err)
 		return
