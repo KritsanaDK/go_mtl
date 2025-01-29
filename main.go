@@ -23,7 +23,7 @@ func main() {
 
 	// Get all arguments
 	args := os.Args
-	appEnv := "prod"
+	appEnv := "dev"
 
 	// Print arguments if available
 	if len(args) > 1 {
