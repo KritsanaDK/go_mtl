@@ -68,16 +68,16 @@ func main() {
 		log.Fatal("Error executing query:", err)
 	}
 
-	products, err := selectProductsByPrice(db)
+	items, err := GetAllItem(db)
 	if err != nil {
 		log.Printf("Error %s when selecting product by price", err)
 		return
 	}
-	for _, product := range products {
-		log.Printf("Item: %s ID: %d", product.item, product.id)
+	for _, item := range items {
+		log.Printf("Item: %s ID: %d", item.item, item.id)
 	}
 
-	ValueTest := 2
+	ValueTest := items[0].id
 
 	cover, err := getItem(db, ValueTest)
 
@@ -92,15 +92,19 @@ func main() {
 	}
 
 	// Insert the Cover object into the database
-	err = insertItem(db, newCover)
-	if err != nil {
-		log.Fatalf("Error inserting item: %s", err)
+	for i := 0; i < 1; i++ {
+		err = insertItem(db, newCover)
+		// Sleep for 2 seconds
+		time.Sleep(200 * time.Millisecond)
+		if err != nil {
+			log.Fatalf("Error inserting item: %s", err)
+		}
 	}
 
 	fmt.Println(cover.id, cover.item)
 
 	updatedCover := &Cover{
-		id:   ValueTest,
+		id:   items[1].id,
 		item: "Updated Item",
 	}
 
@@ -120,7 +124,7 @@ func main() {
 
 }
 
-func selectProductsByPrice(db *sql.DB) ([]Cover, error) {
+func GetAllItem(db *sql.DB) ([]Cover, error) {
 	query := `SELECT id, item FROM dbo.itemData;`
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
