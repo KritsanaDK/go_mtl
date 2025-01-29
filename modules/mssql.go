@@ -175,8 +175,3 @@ func UpdateItem(db *sql.DB, cover *models.Cover) error {
 	log.Printf("Successfully updated %d record(s) with id %d", rowsAffected, cover.Id)
 	return nil
 }
-
-// type Cover struct {
-// 	id   int
-// 	item string
-// }
