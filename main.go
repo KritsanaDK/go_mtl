@@ -21,11 +21,16 @@ func loadEnv(env string) error {
 
 func main() {
 
-	// Get the environment variable to determine which .env file to load
-	appEnv := os.Getenv("APP_ENV")
-	if appEnv == "" {
-		// Default to "dev" if APP_ENV is not set
-		appEnv = "dev"
+	// Get all arguments
+	args := os.Args
+	appEnv := "prod"
+
+	// Print arguments if available
+	if len(args) > 1 {
+		appEnv = args[1]
+		fmt.Println("Arguments:", args[1:])
+	} else {
+		fmt.Println("No arguments provided")
 	}
 
 	// Load the appropriate .env file
@@ -72,7 +77,7 @@ func main() {
 		log.Printf("Item: %s ID: %d", product.item, product.id)
 	}
 
-	ValueTest := 8
+	ValueTest := 2
 
 	cover, err := getItem(db, ValueTest)
 
