@@ -7,19 +7,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/joho/godotenv"
-
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/lib/pq"
 
+	config "github.com/KaDingMeaw/godb/config"
 	models "github.com/KaDingMeaw/godb/models"
 	module "github.com/KaDingMeaw/godb/modules"
 )
-
-func loadEnv(env string) error {
-	fileName := fmt.Sprintf(".env.%s", env)
-	return godotenv.Load(fileName)
-}
 
 func main() {
 
@@ -36,7 +30,7 @@ func main() {
 	}
 
 	// Load the appropriate .env file
-	err := loadEnv(appEnv)
+	err := config.LoadEnv(appEnv)
 	if err != nil {
 		log.Fatalf("Error loading .env.%s file: %v", appEnv, err)
 	}
