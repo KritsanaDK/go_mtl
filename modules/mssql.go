@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/KaDingMeaw/godb/models"
@@ -108,13 +109,16 @@ func DelItem(db *sql.DB, id int) error {
 	return nil
 }
 
-func InsertItem(db *sql.DB, cover *models.Cover) error {
+func InsertItem(db *sql.DB, wg *sync.WaitGroup, cover *models.Cover) error {
+	defer wg.Done()
 	query := "INSERT INTO dbo.itemData (item) VALUES ($item)"
 	ctx, cancelfunc := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelfunc()
 
 	// Prepare the SQL statement
 	stmt, err := db.PrepareContext(ctx, query)
+
+	time.Sleep(200 * time.Millisecond)
 	if err != nil {
 		log.Printf("Error %s when preparing SQL statement", err)
 		return err
@@ -130,7 +134,7 @@ func InsertItem(db *sql.DB, cover *models.Cover) error {
 		return err
 	}
 
-	log.Printf("Successfully inserted item: %+v", cover)
+	// log.Printf("Successfully inserted item: %+v", cover)
 	return nil
 }
 

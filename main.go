@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
+	"strconv"
+	"sync"
 
 	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/lib/pq"
@@ -16,7 +17,7 @@ import (
 )
 
 func main() {
-
+	var wg sync.WaitGroup
 	// Get all arguments
 	args := os.Args
 	appEnv := "dev"
@@ -83,19 +84,25 @@ func main() {
 	log.Printf("Fetched Cover: %+v", cover)
 
 	// Create a new Cover object
-	newCover := &models.Cover{
-		Item: "Sample Item",
-	}
 
 	// Insert the Cover object into the database
-	for i := 0; i < 1; i++ {
-		err = module.InsertItem(db, newCover)
-		// Sleep for 2 seconds
-		time.Sleep(200 * time.Millisecond)
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		newCover := &models.Cover{
+			Item: "Sample Item " + strconv.Itoa(i),
+		}
+
+		err = module.InsertItem(db, &wg, newCover)
+
 		if err != nil {
 			log.Fatalf("Error inserting item: %s", err)
+		} else {
+			fmt.Printf("Insert Completed %s\n", newCover.Item)
 		}
+
 	}
+
+	wg.Wait()
 
 	fmt.Println(cover.Id, cover.Item)
 
