@@ -118,7 +118,7 @@ func InsertItem(db *sql.DB, wg *sync.WaitGroup, cover *models.Cover) error {
 	// Prepare the SQL statement
 	stmt, err := db.PrepareContext(ctx, query)
 
-	time.Sleep(200 * time.Millisecond)
+	time.Sleep(20 * time.Millisecond)
 	if err != nil {
 		log.Printf("Error %s when preparing SQL statement", err)
 		return err

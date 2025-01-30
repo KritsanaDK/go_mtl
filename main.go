@@ -9,14 +9,18 @@ import (
 	"sync"
 
 	_ "github.com/denisenkom/go-mssqldb"
+
+	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq"
 
+	api "github.com/KaDingMeaw/godb/api"
 	config "github.com/KaDingMeaw/godb/config"
 	models "github.com/KaDingMeaw/godb/models"
 	module "github.com/KaDingMeaw/godb/modules"
 )
 
 func main() {
+	e := echo.New()
 	var wg sync.WaitGroup
 	// Get all arguments
 	args := os.Args
@@ -124,5 +128,19 @@ func main() {
 	}
 
 	log.Println("Item deleted successfully.")
+
+	e.GET("/getItem", func(c echo.Context) error {
+		return api.GetItem(c, db)
+	})
+
+	e.GET("/getItemID/:id", func(c echo.Context) error {
+		return api.GetItemID(c, db)
+	})
+
+	e.GET("/deleteItemID/:id", func(c echo.Context) error {
+		return api.DeleteItemID(c, db)
+	})
+
+	e.Logger.Fatal(e.Start(":1323"))
 
 }
